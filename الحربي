@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة الموارد - الإصدار المطور</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #333;
+      color: white;
+      text-align: center;
+    }
+    #game-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    button {
+      background-color: green;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: darkgreen;
+    }
+    .resource {
+      font-size: 20px;
+      margin: 10px;
+    }
+    .log {
+      margin-top: 20px;
+      height: 150px;
+      width: 80%;
+      background-color: #222;
+      overflow-y: scroll;
+      border: 1px solid #555;
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>لعبة الموارد - الإصدار المطور</h1>
+    <div>
+      <span class="resource">الذهب: <span id="gold">1000</span></span>
+      <span class="resource">الطعام: <span id="food">500</span></span>
+      <span class="resource">الجنود: <span id="soldiers">0</span></span>
+    </div>
+    <div>
+      <button id="collect">جمع الموارد</button>
+      <button id="train">تدريب جندي (50 ذهب + 20 طعام)</button>
+      <button id="attack">هجوم</button>
+    </div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <script>
+    // تعريف الموارد
+    let gold = 1000;
+    let food = 500;
+    let soldiers = 0;
+    let logElement = document.getElementById("log");
+
+    // تحديث القيم على الشاشة
+    function updateResources() {
+      document.getElementById("gold").innerText = gold;
+      document.getElementById("food").innerText = food;
+      document.getElementById("soldiers").innerText = soldiers;
+    }
+
+    // إضافة رسالة للسجل
+    function logMessage(message) {
+      let newMessage = document.createElement("div");
+      newMessage.innerText = message;
+      logElement.appendChild(newMessage);
+      logElement.scrollTop = logElement.scrollHeight; // تمرير للأسفل
+    }
+
+    // وظيفة زر جمع الموارد
+    document.getElementById("collect").onclick = function () {
+      let goldCollected = Math.floor(Math.random() * 100) + 50; // عشوائي بين 50 و 150
+      let foodCollected = Math.floor(Math.random() * 50) + 20; // عشوائي بين 20 و 70
+      gold += goldCollected;
+      food += foodCollected;
+      updateResources();
+      logMessage(`تم جمع ${goldCollected} ذهب و ${foodCollected} طعام.`);
+    };
+
+    // وظيفة زر تدريب الجنود
+    document.getElementById("train").onclick = function () {
+      if (gold >= 50 && food >= 20) {
+        gold -= 50;  // خصم 50 ذهب
+        food -= 20;  // خصم 20 طعام
+        soldiers += 1;  // زيادة عدد الجنود
+        updateResources();
+        logMessage("تم تدريب جندي بنجاح!");
+      } else {
+        logMessage("⚠️ لا توجد موارد كافية لتدريب الجنود!");
+      }
+    };
+
+    // وظيفة زر الهجوم
+    document.getElementById("attack").onclick = function () {
+      if (soldiers > 0) {
+        soldiers -= 1;  // خصم جندي واحد
+        let success = Math.random() > 0.3; // 70% نجاح للهجوم
+        if (success) {
+          let loot = Math.floor(Math.random() * 200) + 100; // عشوائي بين 100 و 300
+          gold += loot;
+          logMessage(`🎉 هجوم ناجح! حصلت على ${loot} ذهب.`);
+        } else {
+          logMessage("💥 الهجوم فشل! خسرت جندي واحد.");
+        }
+        updateResources();
+      } else {
+        logMessage("⚠️ لا يوجد جنود للقيام بالهجوم!");
+      }
+    };
+
+    // تحديث الموارد تلقائيًا
+    setInterval(() => {
+      let autoGold = Math.floor(Math.random() * 30) + 10; // زيادة ذهب تلقائية
+      let autoFood = Math.floor(Math.random() * 20) + 5; // زيادة طعام تلقائية
+      gold += autoGold;
+      food += autoFood;
+      updateResources();
+      logMessage(`تمت إضافة ${autoGold} ذهب و ${autoFood} طعام تلقائيًا.`);
+    }, 10000); // كل 10 ثوانٍ
+
+    // تحديث الموارد عند بدء اللعبة
+    updateResources();
+  </script>
+</body>
+</html>
